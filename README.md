@@ -1,2 +1,17 @@
-# Simple_Blockchain_PoW
-A C++ program that simulates a basic blockchain. It mines blocks using SHA-256, stores up to 3 transactions per block, and links them securely with hashes. Demonstrates timestamping, proof-of-work, and block chaining.
+# Simple Blockchain in C++
+
+This is a basic blockchain implementation in C++ that demonstrates core blockchain concepts such as mining, proof-of-work, hashing with SHA-256, and block linking.
+
+## Features
+
+- SHA-256 hashing using OpenSSL
+- Block mining with proof-of-work (adjustable difficulty)
+- Each block can hold up to 3 user-defined transactions
+- Automatic timestamping
+- Genesis block initialization
+- Simple console-based user interface
+
+## Requirements
+
+- C++11 or later
+- OpenSSL library
