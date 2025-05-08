@@ -1,17 +1,28 @@
-# Simple Blockchain in C++
+# Simple C++ Blockchain
 
-This is a basic blockchain implementation in C++ that demonstrates core blockchain concepts such as mining, proof-of-work, hashing with SHA-256, and block linking.
+This project is a basic implementation of a blockchain in C++, demonstrating core blockchain principles such as data immutability, chaining via cryptographic hashes, and timestamping using SHA-256 (via OpenSSL).
 
 ## Features
 
-- SHA-256 hashing using OpenSSL
-- Block mining with proof-of-work (adjustable difficulty)
-- Each block can hold up to 3 user-defined transactions
-- Automatic timestamping
-- Genesis block initialization
-- Simple console-based user interface
+- Creates a blockchain starting with a genesis block.
+- Each block contains:
+  - An index
+  - Timestamp
+  - Data
+  - Previous block's hash
+  - Its own current hash
+- SHA-256 hashing is performed using OpenSSL.
+- Outputs the entire blockchain to the console.
 
 ## Requirements
 
-- C++11 or later
-- OpenSSL library
+- C++ compiler (e.g., g++, clang++)
+- [OpenSSL](https://www.openssl.org/) library installed
+- Windows users: Ensure MinGW/MSYS2 is configured with OpenSSL support
+
+## How to Build
+
+### Windows (MSYS2 example):
+
+```bash
+g++ blockchain.cpp -o blockchain -lssl -lcrypto
