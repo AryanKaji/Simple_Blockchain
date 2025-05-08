@@ -30,7 +30,7 @@ public:
         cout << "\nTime Stamp: " << time_stamp;
         cout << "\nData: " << data;
         cout << "\nCurrent Hash: #" << curr_hash;
-        cout << "\n-------\n";
+        cout << "\n----------------------------------------\n";
     }
 
     string calculateHash(){
@@ -58,7 +58,7 @@ public:
 class Blockchain{
     vector<Block> chain;
     Block createGenesisBlock(){
-        return Block (0, "This is Genesis Block...\nA simple C++ blockchain implementation that uses \nSHA-256 hashing via OpenSSL to securely link blocks \ncontaining data.", "Non");
+        return Block (0, "This is Genesis Block...\n\tA simple C++ blockchain implementation that uses SHA-256 hashing via OpenSSL to securely link blocks containing data.", "Non");
     }
 
 public:
@@ -84,11 +84,13 @@ public:
 
 int main() {
     Blockchain myBlockchain;
-    myBlockchain.addBlock("hello 0");
-    myBlockchain.addBlock("hello 1");
-    myBlockchain.addBlock("hello 2");
-    myBlockchain.addBlock("hello 3");
-    myBlockchain.addBlock("hello 4");
+    myBlockchain.addBlock("Alpha give 5 BTC to Beta.");
+    myBlockchain.addBlock("Bita give 2 BTC to Delta.");
+    myBlockchain.addBlock("Alpha give 1 BTC to Delta.");
+    myBlockchain.addBlock("Gamma give 3 BTC to Alpha.");
+    myBlockchain.addBlock("Delta give 4 BTC to Gamma.");
+    cout << "\n\nBlockchain:\n";
+    cout << "----------------------------------------\n";
     myBlockchain.displayChain();
     return 0;
 }
