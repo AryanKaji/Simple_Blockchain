@@ -1,171 +1,94 @@
 #include <iostream>
 #include <vector>
 #include <string>
-#include <iomanip>
 #include <sstream>
+#include <iomanip>
+#include <openssl/ssl.h>
 #include <openssl/sha.h>
-#include <ctime>
-#include <chrono>
 
 using namespace std;
 
-const int MAX_TRANSACTIONS = 3; // Limit per block
-
-class Block {
-private:
+class Block{
     int index;
     string prev_hash;
-    int nonce;
-    vector<string> transactions; // Stores multiple transactions
-
-public:
     string time_stamp;
+    string data;
+public:
     string curr_hash;
 
-    Block(int index, vector<string> transactions, string prev_hash)
-        : index(index), transactions(transactions), prev_hash(prev_hash), nonce(0) {
+    Block(int index, string data, string prev_hash){
+        this->index = index;
+        this->data = data;
+        this->prev_hash = prev_hash;
         time_stamp = getCurrentTime();
-        curr_hash = mineBlock(4);
+        curr_hash = calculateHash ();
     }
 
-    void getBlock() {
-        cout << "\n==============================";
-        cout << "\nBlock Mined!";
+    void getBlock(){
         cout << "\nIndex: " << index;
         cout << "\nPrevious Hash: #" << prev_hash;
         cout << "\nTime Stamp: " << time_stamp;
-        cout << "\nTransactions:";
-        for (const string& tx : transactions) {
-            cout << "\n  - " << tx;
-        }
-        cout << "\nNonce: " << nonce;
+        cout << "\nData: " << data;
         cout << "\nCurrent Hash: #" << curr_hash;
-        cout << "\n==============================\n";
+        cout << "\n-------\n";
     }
 
-    string getCurrentTime() {
-        auto now = chrono::system_clock::now();
-        time_t now_c = chrono::system_clock::to_time_t(now);
-        struct tm* parts = localtime(&now_c);
-
-        stringstream timeStream;
-        timeStream << put_time(parts, "%d/%m/%Y %H:%M:%S");
-        return timeStream.str();
-    }
-
-    string calculateHash() {
+    string calculateHash(){
+        string inputStr = to_string(index) + prev_hash + time_stamp + data;
         unsigned char hash[SHA256_DIGEST_LENGTH];
+        const unsigned char* dataBytes = reinterpret_cast<const unsigned char*>(inputStr.c_str());
+        SHA256(dataBytes, inputStr.size(), hash);
+    
         stringstream ss;
-        string inputStr = to_string(index) + prev_hash + time_stamp + to_string(nonce);
-
-        for (const string& tx : transactions) {
-            inputStr += tx;
-        }
-
-        SHA256(reinterpret_cast<const unsigned char*>(inputStr.c_str()), inputStr.size(), hash);
-
-        for (int i = 0; i < SHA256_DIGEST_LENGTH; i++) {
+        for(int i = 0; i < SHA256_DIGEST_LENGTH; i++){
             ss << hex << setw(2) << setfill('0') << (int)hash[i];
         }
-
         return ss.str();
     }
-
-    string mineBlock(int difficulty) {
-        string target(difficulty, '0');
-        do {
-            nonce++;
-            curr_hash = calculateHash();
-        } while (curr_hash.substr(0, difficulty) != target);
-
-        return curr_hash;
+    
+    string getCurrentTime() {
+        time_t now = time(0);
+        tm* localtm = localtime(&now);
+        char buffer[20];
+        strftime(buffer, sizeof(buffer), "%Y-%m-%d %H:%M:%S", localtm);
+        return std::string(buffer);
     }
 };
 
-class Blockchain {
-private:
+class Blockchain{
     vector<Block> chain;
-
-    Block createGenesisBlock() {
-        return Block(0, {"Genesis Block"}, "None");
+    Block createGenesisBlock(){
+        return Block (0, "This is Genesis Block...\nA simple C++ blockchain implementation that uses \nSHA-256 hashing via OpenSSL to securely link blocks \ncontaining data.", "Non");
     }
 
 public:
-    Blockchain() {
+    Blockchain(){
         chain.push_back(createGenesisBlock());
     }
 
-    Block getLatestBlock() {
-        return chain.back();
+    Block getLatestBlock(){
+         return chain.back();
     }
 
-    void addBlock(vector<string> transactions) {
-        Block newBlock(chain.size(), transactions, getLatestBlock().curr_hash);
+    void addBlock(string data){ 
+        Block newBlock(chain.size(), data, getLatestBlock().curr_hash);
         chain.push_back(newBlock);
     }
 
-    void displayChain() {
+    void displayChain(){
         for (int i = 0; i < chain.size(); i++) {
             chain[i].getBlock();
         }
     }
 };
 
-// Function to get user transactions
-vector<string> getTransactions() {
-    vector<string> transactions;
-    char choice;
-
-    while (transactions.size() < MAX_TRANSACTIONS) {
-        string sender, receiver, amount, transaction;
-        
-        cout << "\nEnter Transaction Details:";
-        cout << "\nSender: ";
-        cin >> sender;
-        cout << "Receiver: ";
-        cin >> receiver;
-        cout << "Amount: ";
-        cin >> amount;
-
-        transaction = sender + " pays " + receiver + " " + amount + " BTC";
-        transactions.push_back(transaction);
-
-        if (transactions.size() == MAX_TRANSACTIONS) {
-            cout << "\nTransaction limit reached. Block will be automatically mined.\n";
-            break;
-        }
-
-        cout << "Do you want to add another transaction? (y/n): ";
-        cin >> choice;
-
-        if (choice == 'n' || choice == 'N') {
-            break;
-        }
-    }
-
-    return transactions;
-}
-
 int main() {
     Blockchain myBlockchain;
-    char choice;
-
-    while (true) {
-        cout << "\nAdding a new block...\n";
-        vector<string> transactions = getTransactions();
-
-        cout << "\nFinalizing block and mining...\n";
-        myBlockchain.addBlock(transactions);
-
-        cout << "Do you want to add another block? (y/n): ";
-        cin >> choice;
-        if (choice == 'n' || choice == 'N') {
-            break;
-        }
-    }
-
-    cout << "\nBlockchain Structure:\n";
+    myBlockchain.addBlock("hello 0");
+    myBlockchain.addBlock("hello 1");
+    myBlockchain.addBlock("hello 2");
+    myBlockchain.addBlock("hello 3");
+    myBlockchain.addBlock("hello 4");
     myBlockchain.displayChain();
-
     return 0;
 }
