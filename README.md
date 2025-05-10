@@ -31,3 +31,5 @@ chaining via cryptographic hashes, and timestamping using SHA-256 (via OpenSSL).
 
 ```bash
 g++ blockchain.cpp -o blockchain -lssl -lcrypto
+```
+---
